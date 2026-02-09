@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3 Years of Us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: radial-gradient(circle,#fff0f3, #f7c1cc);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            font-family: 'Poppins', sans-serif;
+            touch-action: none;
+        }
+
+        /* Dull Life Overlay */
+        #dullOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 200; display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            transition: all 1s ease;
+        }
+
+        .dull-text {
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
+            color: #c56767;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            letter-spacing: 5px; animation: breathe 3s infinite;
+            text-align: center; font-weight: 600;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.3; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Stats Section */
+        #statsBox {
+            display: none;
+            position: fixed;
+            z-index: 800;
+            text-align: center;
+            color: rgb(148, 64, 64);
+        }
+
+        .stat-item {
+            font-size: 1.8rem;
+            margin: 15px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+            text-shadow: 0 0 15px #ff4d4d;
+        }
+
+        /* Proposal Section */
+        #proposalBox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            text-align: center;
+            color: rgb(138, 25, 25);
+            width: 90%;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            position: relative;
+            height: 150px;
+        }
+
+        .no-btn, .yes-btn {
+            padding: 12px 25px;
+            background: white;
+            color: #ff1744;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: absolute;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            white-space: nowrap;
+        }
+
+        /* Marriage Certificate */
+        #marriageCertificate {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            width: 85%; max-width: 450px;
+            background: #ffffff;
+            padding: 30px;
+            border: 8px double #ff1744;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 0 100px rgba(255, 23, 68, 0.9);
+            display: none;
+            z-index: 2000;
+            font-family: 'Georgia', serif;
+            border-radius: 15px;
+        }
+
+        .cert-names { font-family: 'Brush Script MT', cursive; font-size: 2.2rem; color: #ff1744; margin: 10px 0; }
+        .infinity-symbol { font-size: 2.5rem; color: #ff1744; display: block; margin: 10px 0; }
+
+        /* General Hearts & UI */
+        #mainHeading { color: #5a0909; font-size: clamp(1.8rem, 8vw, 3.5rem); text-shadow: 0 0 15px #ff4d4d; z-index: 10; font-family: 'Brush Script MT', cursive; text-align: center; }
+        #kiwiBtn { padding: 15px 35px; background: linear-gradient(45deg, #a4eb4c, #7cb342); color: #000; font-weight: bold; border: none; border-radius: 50px; cursor: pointer; z-index: 10; margin-top: 20px; box-shadow: 0 0 20px rgba(124, 179, 66, 0.6); }
+        .quote-box { position: absolute; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); padding: 10px 15px; border-radius: 10px; color: #fff; opacity: 0; transition: all 1s ease-in-out; z-index: 5; }
+        .show { opacity: 1; }
+        .bg-heart { position: absolute; color: #ff4d4d; pointer-events: none; top: 100vh; animation: floatUp linear infinite; z-index: 1; opacity: 0.6; }
+        @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 20% { opacity: 0.8; } 100% { transform: translateY(-125vh) rotate(360deg); opacity: 0; } }
+        #heartCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 300; display: none; }
+        .pop-heart { position: absolute; z-index: 1500; pointer-events: none; animation: popOut 1.5s forwards ease-out; }
+        @keyframes popOut { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(1.5) translateY(-100px); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="dullOverlay"><div class="dull-text">MY LIFE WAS DULL...</div></div>
+
+    <div id="statsBox">
+        <div class="stat-item">3 Years.</div>
+        <div class="stat-item">1,095 Days of Us.</div>
+        <div class="stat-item">Countless Smiles.</div>
+        <div class="stat-item">One Infinite Love.</div>
+    </div>
+
+    <div id="proposalBox">
+        <h2 style="font-size: 2.2rem; text-shadow: 0 0 15px #c75c69;">Will you marry me?</h2>
+        <div class="btn-container">
+            <button class="yes-btn" id="btnYes" style="left: 45%;">yes</button>
+            <button class="no-btn" id="btnNo" style="left: 52%;">no</button>
+        </div>
+    </div>
+
+    <canvas id="heartCanvas"></canvas>
+
+    <h1 id="mainHeading">Happy 3 Years My Love</h1>
+    <button id="kiwiBtn">Click it if you love kiwi 🥝</button>
+
+    <div class="quote-box">i love you the most</div>
+    <div class="quote-box">you are the best person in my life</div>
+    <div class="quote-box">i want to spend my life with you</div>
+    <div class="quote-box">i want to see you as my life partner</div>
+    <div class="quote-box">you are so so special for me</div>
+    <div class="quote-box">you are my whole heart</div>
+    <div class="quote-box">you are the reason behind my smile</div>
+    <div class="quote-box">i am blessed to have you</div>
+    <div class="quote-box">you are my home, my safe place</div>
+    <div class="quote-box">luckiest person alive with you</div>
+
+    <div id="marriageCertificate">
+        <p style="font-size: 0.7rem; letter-spacing: 2px; color: #666;">MARRIAGE CERTIFICATE</p>
+        <div class="cert-names">Aarushi weds Divyansh</div>
+        <p style="margin: 5px 0;">Since</p>
+        <div style="font-weight: bold; font-size: 1.2rem; color: #ff1744;">25-02-2023</div>
+        <div class="infinity-symbol">∞</div>
+        <p style="font-style: italic; font-size: 1.1rem; color: #ff1744; font-weight: bold;">Now you are permanently booked Mr. Shastri💘</p>
+        <p style="margin-top: 15px; font-size: 0.8rem; border-top: 1px solid #ddd; padding-top: 10px;">Signed by Your Wiffey-to-be 💍</p>
+        <button onclick="location.reload()" style="margin-top:15px; background:#ff1744; border:none; padding:10px 20px; cursor:pointer; color:white; border-radius:50px;">❤️</button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('kiwiBtn');
+        const music = document.getElementById('bgMusic');
+        const quotes = document.querySelectorAll('.quote-box');
+        const canvas = document.getElementById('heartCanvas');
+        const dullOverlay = document.getElementById('dullOverlay');
+        const statsBox = document.getElementById('statsBox');
+        const proposalBox = document.getElementById('proposalBox');
+        const ctx = canvas.getContext('2d');
+
+        let clickCount = 0;
+        const messages = ["schi?", "think again", "tang bhut krugi", "mrzi h teri", "All the best"];
+
+        function spawnHeart() {
+            const h = document.createElement('div');
+            h.classList.add('bg-heart');
+            h.innerHTML = Math.random() > 0.5 ? '❤️' : '💕';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.fontSize = Math.random() * 25 + 15 + 'px';
+            h.style.animationDuration = Math.random() * 2 + 3 + 's';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 5000);
+        }
+
+        for(let i=0; i<200; i++) { setTimeout(spawnHeart, Math.random() * 1500); }
+        setInterval(spawnHeart, 40);
+
+        btn.addEventListener('click', () => {
+            // SET MUSIC TO 02:04 (124 seconds) AND PLAY
+            music.currentTime = 124;
+            music.play().catch(e => console.log("Audio play failed:", e));
+
+            document.getElementById('mainHeading').style.display = 'none';
+            btn.style.display = 'none';
+            const heartShape = [{x:-15,y:-22},{x:15,y:-22},{x:-24,y:-8},{x:24,y:-8},{x:-25,y:8},{x:25,y:8},{x:-18,y:22},{x:18,y:22},{x:-10,y:34},{x:10,y:34}];
+            quotes.forEach((q, i) => {
+                setTimeout(() => {
+                    q.classList.add('show');
+                    q.style.left = (50 + heartShape[i].x) + '%';
+                    q.style.top = (45 + heartShape[i].y) + '%';
+                    q.style.transform = 'translate(-50%, -50%)';
+                    if(i === quotes.length - 1) setTimeout(startTransition, 3000);
+                }, i * 450); 
+            });
+        });
+
+        function startTransition() {
+            quotes.forEach(q => q.style.opacity = '0');
+            dullOverlay.style.display = 'flex';
+            setTimeout(() => {
+                document.querySelector('.dull-text').innerText = "UNTIL YOU CAME...";
+                setTimeout(() => {
+                    dullOverlay.style.opacity = '0';
+                    setTimeout(() => {
+                        dullOverlay.style.display = 'none';
+                        canvas.style.display = 'block';
+                        resizeCanvas();
+                        drawNeuralHeart();
+                    }, 500);
+                }, 2000);
+            }, 2500);
+        }
+
+        function drawNeuralHeart() {
+            const centerX = canvas.width / 2; const centerY = canvas.height / 2;
+            const scale = Math.min(canvas.width, canvas.height) / 45; 
+            let count = 0;
+            ctx.strokeStyle = '#ff1744'; ctx.shadowBlur = 15; ctx.shadowColor = '#ff1744'; ctx.lineWidth = 1.2;
+            function animate() {
+                if (count < 1400) { 
+                    for(let j = 0; j < 6; j++) {
+                        const t = Math.random() * Math.PI * 2;
+                        const dx = 16 * Math.pow(Math.sin(t), 3);
+                        const dy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                        const targetX = centerX + dx * scale; const targetY = centerY + dy * scale;
+                        ctx.globalAlpha = 0.4; ctx.beginPath(); ctx.moveTo(centerX, centerY);
+                        const cp1x = centerX + (Math.random() - 0.5) * 250; const cp1y = centerY + (Math.random() - 0.5) * 250;
+                        ctx.bezierCurveTo(cp1x, cp1y, targetX, targetY, targetX, targetY); ctx.stroke(); count++;
+                    }
+                    requestAnimationFrame(animate);
+                } else {
+                    showStatsPhase();
+                }
+            }
+            animate();
+        }
+
+        function showStatsPhase() {
+            canvas.style.opacity = '0.2';
+            statsBox.style.display = 'block';
+            const items = document.querySelectorAll('.stat-item');
+            items.forEach((item, i) => {
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, i * 1500);
+            });
+            setTimeout(() => {
+                statsBox.style.opacity = '0';
+                setTimeout(() => {
+                    statsBox.style.display = 'none';
+                    proposalBox.style.display = 'block';
+                }, 1000);
+            }, items.length * 1500 + 2000);
+        }
+
+        document.querySelectorAll('.yes-btn, .no-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (clickCount < 5) {
+                    this.innerText = messages[clickCount];
+                    const newTop = (Math.random() * 40 - 20) + 'vh';
+                    const newLeft = (Math.random() * 70 + 10) + '%';
+                    this.style.top = newTop;
+                    this.style.left = newLeft;
+                    clickCount++;
+                }
+                
+                if (clickCount === 5) {
+                    setTimeout(() => {
+                        proposalBox.style.display = 'none';
+                        showFinalSequence();
+                    }, 800);
+                }
+            });
+        });
+
+        function showFinalSequence() {
+            const cert = document.getElementById('marriageCertificate');
+            cert.style.display = 'block';
+            setInterval(popHearts, 1200);
+            setTimeout(() => { 
+                cert.style.transform = 'translate(-50%, -50%) scale(1)'; 
+                cert.style.transition = 'all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
+            }, 100);
+        }
+
+        function popHearts() {
+            const colors = ['#ff1744', '#ff4d4d', '#ff85a2', '#ffffff'];
+            for(let i=0; i<12; i++) {
+                const ph = document.createElement('div');
+                ph.className = 'pop-heart';
+                ph.innerHTML = '❤️';
+                ph.style.color = colors[Math.floor(Math.random() * colors.length)];
+                ph.style.left = Math.random() * 100 + 'vw';
+                ph.style.top = Math.random() * 100 + 'vh';
+                ph.style.fontSize = (Math.random() * 35 + 20) + 'px';
+                document.body.appendChild(ph);
+                setTimeout(() => ph.remove(), 1500);
+            }
+        }
+
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+    </script>
+</body>
+</html>
