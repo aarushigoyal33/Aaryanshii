@@ -83,16 +83,22 @@
             z-index: 800;
             text-align: center;
             color: rgb(148, 64, 64);
-            width: 100%;
+            width: 90%;
+            /* FIXED: Centering logic added */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .stat-item {
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            margin: 15px 0;
+            /* Adjusted font size slightly for better fit on mobile */
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
+            margin: 10px 0;
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.8s ease;
             text-shadow: 0 0 15px #ff4d4d;
+            font-weight: 600;
         }
 
         #proposalBox {
@@ -342,13 +348,14 @@
             }, 2500);
         }
 
+        // --- OPTIMIZED HEART DRAWING (FASTER) ---
         function drawNeuralHeart() {
             const centerX = window.innerWidth / 2; 
             const centerY = window.innerHeight / 2;
             const scale = Math.min(window.innerWidth, window.innerHeight) / 45; 
             
             let count = 0;
-            const maxCount = 2000; 
+            const maxCount = 1500; // Reduced density for speed
             
             ctx.strokeStyle = '#ff1744'; 
             ctx.shadowBlur = 15; 
@@ -357,7 +364,8 @@
             
             function animate() {
                 if (count < maxCount) { 
-                    for(let j = 0; j < 3; j++) {
+                    // Increased lines per frame (15) for faster drawing (~4 secs)
+                    for(let j = 0; j < 15; j++) {
                         const t = Math.random() * Math.PI * 2;
                         const dx = 16 * Math.pow(Math.sin(t), 3);
                         const dy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
@@ -382,26 +390,30 @@
             animate();
         }
 
+        // --- FASTER STATS SEQUENCE ---
         function showStatsPhase() {
             canvas.style.opacity = '0.2';
             statsBox.style.display = 'block';
             const items = document.querySelectorAll('.stat-item');
+            
+            // Reduced delay from 1500 to 800ms
             items.forEach((item, i) => {
                 setTimeout(() => {
                     item.style.opacity = '1';
                     item.style.transform = 'translateY(0)';
-                }, i * 1500);
+                }, i * 800);
             });
+            
             setTimeout(() => {
                 statsBox.style.opacity = '0';
                 setTimeout(() => {
                     statsBox.style.display = 'none';
                     proposalBox.style.display = 'block';
                 }, 1000);
-            }, items.length * 1500 + 2000);
+            }, items.length * 800 + 1000);
         }
 
-        // --- THE FIX: CORNER ANCHORING ---
+        // --- CORNER ANCHORING LOGIC ---
 
         const btnYes = document.getElementById('btnYes');
         const btnNo = document.getElementById('btnNo');
@@ -409,32 +421,23 @@
         let yesClickCount = 0;
         const yesMessages = ["schi?", "think again", "tang bhut krugi", "mrzi h teri", "All the best"];
 
-        // The 4 Safe Corners
-        // We use 'right: 15px' instead of 'left: 300px'
-        // This means if the text expands, it expands inwards, not off-screen.
         const safePositions = [
-            { top: '15px', left: '15px', right: 'auto', bottom: 'auto' }, // Top-Left
-            { top: '15px', right: '15px', left: 'auto', bottom: 'auto' }, // Top-Right (Safe for long text)
-            { bottom: '15px', left: '15px', right: 'auto', top: 'auto' }, // Bottom-Left
-            { bottom: '15px', right: '15px', left: 'auto', top: 'auto' }  // Bottom-Right (Safe for long text)
+            { top: '15px', left: '15px', right: 'auto', bottom: 'auto' }, 
+            { top: '15px', right: '15px', left: 'auto', bottom: 'auto' }, 
+            { bottom: '15px', left: '15px', right: 'auto', top: 'auto' }, 
+            { bottom: '15px', right: '15px', left: 'auto', top: 'auto' }  
         ];
 
         btnYes.addEventListener('click', () => {
             if (yesClickCount < yesMessages.length) {
-                // 1. Change Text
                 btnYes.innerText = yesMessages[yesClickCount];
-                
-                // 2. Pick the next corner based on click count (Cycle through 0, 1, 2, 3)
                 const nextPos = safePositions[yesClickCount % 4];
-
-                // 3. Apply styles directly
                 btnYes.style.position = "fixed";
                 btnYes.style.top = nextPos.top;
                 btnYes.style.bottom = nextPos.bottom;
                 btnYes.style.left = nextPos.left;
                 btnYes.style.right = nextPos.right;
-                btnYes.style.zIndex = "10000"; // Always on top
-
+                btnYes.style.zIndex = "10000"; 
                 yesClickCount++;
             } else {
                 proposalBox.style.display = 'none';
@@ -452,7 +455,6 @@
                 slapOverlay.style.display = 'none';
                 proposalBox.style.display = 'block';
                 
-                // Reset Button
                 btnYes.style.display = 'inline-block';
                 btnYes.style.position = 'relative'; 
                 btnYes.style.left = 'auto';
