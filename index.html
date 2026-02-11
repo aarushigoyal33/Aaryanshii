@@ -6,10 +6,13 @@
     <title>3 Years of Us</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        /* RESET & CORE */
+        * { box-sizing: border-box; }
+        
         body {
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            overflow: hidden; 
             background: radial-gradient(circle,#fff0f3, #f7c1cc);
             display: flex;
             flex-direction: column;
@@ -18,10 +21,11 @@
             height: 100vh;
             width: 100vw;
             font-family: 'Poppins', sans-serif;
-            touch-action: none;
+            touch-action: manipulation;
+            position: relative;
         }
 
-        /* Dull Life Overlay */
+        /* --- OVERLAYS --- */
         #dullOverlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -44,17 +48,46 @@
             50% { opacity: 1; transform: scale(1); }
         }
 
-        /* Stats Section */
+        #slapOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(138, 0, 0, 0.9);
+            z-index: 9999;
+            display: none; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+        }
+
+        .slap-text {
+            font-size: clamp(2rem, 8vw, 4rem);
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite;
+            text-shadow: 4px 4px 0px #000;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+            40%, 60% { transform: translate3d(8px, 0, 0); }
+        }
+
+        /* --- CONTENT --- */
         #statsBox {
             display: none;
             position: fixed;
             z-index: 800;
             text-align: center;
             color: rgb(148, 64, 64);
+            width: 100%;
         }
 
         .stat-item {
-            font-size: 1.8rem;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
             margin: 15px 0;
             opacity: 0;
             transform: translateY(20px);
@@ -62,7 +95,6 @@
             text-shadow: 0 0 15px #ff4d4d;
         }
 
-        /* Proposal Section */
         #proposalBox {
             display: none;
             position: fixed;
@@ -70,36 +102,51 @@
             text-align: center;
             color: rgb(138, 25, 25);
             width: 90%;
+            max-width: 600px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #proposalBox h2 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            text-shadow: 0 0 15px #c75c69;
+            margin-bottom: 40px;
         }
 
         .btn-container {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
+            align-items: center;
+            gap: 20px;
             position: relative;
-            height: 150px;
+            width: 100%;
+            height: 80px; 
         }
 
         .no-btn, .yes-btn {
-            padding: 12px 25px;
+            padding: 15px 30px;
             background: white;
             color: #ff1744;
             border: none;
             border-radius: 50px;
             font-weight: bold;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: absolute;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
             white-space: nowrap;
+            min-width: 100px;
+            position: relative;
+            z-index: 1001; 
+        }
+        
+        .yes-btn:active, .no-btn:active {
+            transform: scale(0.95);
         }
 
-        /* Marriage Certificate */
         #marriageCertificate {
             position: fixed;
             top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
+            transform: translate(-50%, -50%) scale(1);
             width: 85%; max-width: 450px;
             background: #ffffff;
             padding: 30px;
@@ -111,19 +158,63 @@
             z-index: 2000;
             font-family: 'Georgia', serif;
             border-radius: 15px;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .cert-names { font-family: 'Brush Script MT', cursive; font-size: 2.2rem; color: #ff1744; margin: 10px 0; }
+        @media (max-width: 600px) {
+            #marriageCertificate {
+                width: 90%;
+                transform: translate(-50%, -50%) scale(0.75) !important; 
+                padding: 15px;
+            }
+        }
+
+        .cert-names { font-family: 'Brush Script MT', cursive; font-size: clamp(1.8rem, 5vw, 2.5rem); color: #ff1744; margin: 10px 0; }
         .infinity-symbol { font-size: 2.5rem; color: #ff1744; display: block; margin: 10px 0; }
 
-        /* General Hearts & UI */
-        #mainHeading { color: #5a0909; font-size: clamp(1.8rem, 8vw, 3.5rem); text-shadow: 0 0 15px #ff4d4d; z-index: 10; font-family: 'Brush Script MT', cursive; text-align: center; }
-        #kiwiBtn { padding: 15px 35px; background: linear-gradient(45deg, #a4eb4c, #7cb342); color: #000; font-weight: bold; border: none; border-radius: 50px; cursor: pointer; z-index: 10; margin-top: 20px; box-shadow: 0 0 20px rgba(124, 179, 66, 0.6); }
-        .quote-box { position: absolute; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); padding: 10px 15px; border-radius: 10px; color: #fff; opacity: 0; transition: all 1s ease-in-out; z-index: 5; }
+        #mainHeading { 
+            color: #5a0909; 
+            font-size: clamp(2rem, 8vw, 3.5rem); 
+            text-shadow: 0 0 15px #ff4d4d; 
+            z-index: 10; 
+            font-family: 'Brush Script MT', cursive; 
+            text-align: center; 
+            padding: 0 20px;
+        }
+        
+        #kiwiBtn { padding: 15px 35px; background: linear-gradient(45deg, #a4eb4c, #7cb342); color: #000; font-weight: bold; border: none; border-radius: 50px; cursor: pointer; z-index: 10; margin-top: 20px; box-shadow: 0 0 20px rgba(124, 179, 66, 0.6); font-size: 1rem; }
+        
+        .quote-box { 
+            position: absolute; 
+            background: rgba(0, 0, 0, 0.75); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            padding: 8px 10px; 
+            border-radius: 10px; 
+            color: #fff; 
+            opacity: 0; 
+            transition: all 1s ease-in-out; 
+            z-index: 5; 
+            font-size: clamp(0.7rem, 3vw, 0.9rem);
+            max-width: 120px;
+            text-align: center;
+            white-space: normal;
+            line-height: 1.2;
+        }
+        
         .show { opacity: 1; }
         .bg-heart { position: absolute; color: #ff4d4d; pointer-events: none; top: 100vh; animation: floatUp linear infinite; z-index: 1; opacity: 0.6; }
         @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 20% { opacity: 0.8; } 100% { transform: translateY(-125vh) rotate(360deg); opacity: 0; } }
-        #heartCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 300; display: none; }
+        
+        #heartCanvas { 
+            position: absolute; 
+            top: 0; left: 0; 
+            z-index: 300; 
+            display: none; 
+            width: 100%; 
+            height: 100%;
+        }
+        
         .pop-heart { position: absolute; z-index: 1500; pointer-events: none; animation: popOut 1.5s forwards ease-out; }
         @keyframes popOut { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(1.5) translateY(-100px); opacity: 0; } }
     </style>
@@ -135,6 +226,10 @@
     </audio>
 
     <div id="dullOverlay"><div class="dull-text">MY LIFE WAS DULL...</div></div>
+    
+    <div id="slapOverlay">
+        <div class="slap-text">CHAANTA KHAYEGA<br>👋😡</div>
+    </div>
 
     <div id="statsBox">
         <div class="stat-item">3 Years.</div>
@@ -144,10 +239,10 @@
     </div>
 
     <div id="proposalBox">
-        <h2 style="font-size: 2.2rem; text-shadow: 0 0 15px #c75c69;">Will you marry me?</h2>
+        <h2>Will you marry me?</h2>
         <div class="btn-container">
-            <button class="yes-btn" id="btnYes" style="left: 45%;">yes</button>
-            <button class="no-btn" id="btnNo" style="left: 52%;">no</button>
+            <button class="yes-btn" id="btnYes">YES</button>
+            <button class="no-btn" id="btnNo">NO</button>
         </div>
     </div>
 
@@ -157,15 +252,15 @@
     <button id="kiwiBtn">Click it if you love kiwi 🥝</button>
 
     <div class="quote-box">i love you the most</div>
-    <div class="quote-box">you are the best person in my life</div>
-    <div class="quote-box">i want to spend my life with you</div>
-    <div class="quote-box">i want to see you as my life partner</div>
-    <div class="quote-box">you are so so special for me</div>
-    <div class="quote-box">you are my whole heart</div>
-    <div class="quote-box">you are the reason behind my smile</div>
-    <div class="quote-box">i am blessed to have you</div>
-    <div class="quote-box">you are my home, my safe place</div>
-    <div class="quote-box">luckiest person alive with you</div>
+    <div class="quote-box">best person ever</div>
+    <div class="quote-box">lifetime with you</div>
+    <div class="quote-box">my life partner</div>
+    <div class="quote-box">you are special</div>
+    <div class="quote-box">my whole heart</div>
+    <div class="quote-box">reason for smiles</div>
+    <div class="quote-box">blessed to have you</div>
+    <div class="quote-box">my safe place</div>
+    <div class="quote-box">luckiest alive</div>
 
     <div id="marriageCertificate">
         <p style="font-size: 0.7rem; letter-spacing: 2px; color: #666;">MARRIAGE CERTIFICATE</p>
@@ -186,10 +281,8 @@
         const dullOverlay = document.getElementById('dullOverlay');
         const statsBox = document.getElementById('statsBox');
         const proposalBox = document.getElementById('proposalBox');
+        const slapOverlay = document.getElementById('slapOverlay');
         const ctx = canvas.getContext('2d');
-
-        let clickCount = 0;
-        const messages = ["schi?", "think again", "tang bhut krugi", "mrzi h teri", "All the best"];
 
         function spawnHeart() {
             const h = document.createElement('div');
@@ -206,19 +299,27 @@
         setInterval(spawnHeart, 40);
 
         btn.addEventListener('click', () => {
-            // SET MUSIC TO 02:04 (124 seconds) AND PLAY
             music.currentTime = 124;
             music.play().catch(e => console.log("Audio play failed:", e));
 
             document.getElementById('mainHeading').style.display = 'none';
             btn.style.display = 'none';
-            const heartShape = [{x:-15,y:-22},{x:15,y:-22},{x:-24,y:-8},{x:24,y:-8},{x:-25,y:8},{x:25,y:8},{x:-18,y:22},{x:18,y:22},{x:-10,y:34},{x:10,y:34}];
+            
+            const heartShape = [
+                {x:-20,y:-25}, {x:20,y:-25}, 
+                {x:-30,y:-10}, {x:30,y:-10}, 
+                {x:-35,y:5},  {x:35,y:5},    
+                {x:-25,y:20}, {x:25,y:20},   
+                {x:-15,y:35}, {x:15,y:35}    
+            ];
+
             quotes.forEach((q, i) => {
                 setTimeout(() => {
                     q.classList.add('show');
                     q.style.left = (50 + heartShape[i].x) + '%';
                     q.style.top = (45 + heartShape[i].y) + '%';
                     q.style.transform = 'translate(-50%, -50%)';
+                    
                     if(i === quotes.length - 1) setTimeout(startTransition, 3000);
                 }, i * 450); 
             });
@@ -242,20 +343,36 @@
         }
 
         function drawNeuralHeart() {
-            const centerX = canvas.width / 2; const centerY = canvas.height / 2;
-            const scale = Math.min(canvas.width, canvas.height) / 45; 
+            const centerX = window.innerWidth / 2; 
+            const centerY = window.innerHeight / 2;
+            const scale = Math.min(window.innerWidth, window.innerHeight) / 45; 
+            
             let count = 0;
-            ctx.strokeStyle = '#ff1744'; ctx.shadowBlur = 15; ctx.shadowColor = '#ff1744'; ctx.lineWidth = 1.2;
+            const maxCount = 2000; 
+            
+            ctx.strokeStyle = '#ff1744'; 
+            ctx.shadowBlur = 15; 
+            ctx.shadowColor = '#ff1744'; 
+            ctx.lineWidth = 1.2;
+            
             function animate() {
-                if (count < 1400) { 
-                    for(let j = 0; j < 6; j++) {
+                if (count < maxCount) { 
+                    for(let j = 0; j < 3; j++) {
                         const t = Math.random() * Math.PI * 2;
                         const dx = 16 * Math.pow(Math.sin(t), 3);
                         const dy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
                         const targetX = centerX + dx * scale; const targetY = centerY + dy * scale;
-                        ctx.globalAlpha = 0.4; ctx.beginPath(); ctx.moveTo(centerX, centerY);
-                        const cp1x = centerX + (Math.random() - 0.5) * 250; const cp1y = centerY + (Math.random() - 0.5) * 250;
-                        ctx.bezierCurveTo(cp1x, cp1y, targetX, targetY, targetX, targetY); ctx.stroke(); count++;
+                        
+                        ctx.globalAlpha = 0.4; 
+                        ctx.beginPath(); 
+                        ctx.moveTo(centerX, centerY);
+                        
+                        const cp1x = centerX + (Math.random() - 0.5) * 250; 
+                        const cp1y = centerY + (Math.random() - 0.5) * 250;
+                        
+                        ctx.bezierCurveTo(cp1x, cp1y, targetX, targetY, targetX, targetY); 
+                        ctx.stroke(); 
+                        count++;
                     }
                     requestAnimationFrame(animate);
                 } else {
@@ -284,34 +401,75 @@
             }, items.length * 1500 + 2000);
         }
 
-        document.querySelectorAll('.yes-btn, .no-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (clickCount < 5) {
-                    this.innerText = messages[clickCount];
-                    const newTop = (Math.random() * 40 - 20) + 'vh';
-                    const newLeft = (Math.random() * 70 + 10) + '%';
-                    this.style.top = newTop;
-                    this.style.left = newLeft;
-                    clickCount++;
-                }
+        // --- THE FIX: CORNER ANCHORING ---
+
+        const btnYes = document.getElementById('btnYes');
+        const btnNo = document.getElementById('btnNo');
+        
+        let yesClickCount = 0;
+        const yesMessages = ["schi?", "think again", "tang bhut krugi", "mrzi h teri", "All the best"];
+
+        // The 4 Safe Corners
+        // We use 'right: 15px' instead of 'left: 300px'
+        // This means if the text expands, it expands inwards, not off-screen.
+        const safePositions = [
+            { top: '15px', left: '15px', right: 'auto', bottom: 'auto' }, // Top-Left
+            { top: '15px', right: '15px', left: 'auto', bottom: 'auto' }, // Top-Right (Safe for long text)
+            { bottom: '15px', left: '15px', right: 'auto', top: 'auto' }, // Bottom-Left
+            { bottom: '15px', right: '15px', left: 'auto', top: 'auto' }  // Bottom-Right (Safe for long text)
+        ];
+
+        btnYes.addEventListener('click', () => {
+            if (yesClickCount < yesMessages.length) {
+                // 1. Change Text
+                btnYes.innerText = yesMessages[yesClickCount];
                 
-                if (clickCount === 5) {
-                    setTimeout(() => {
-                        proposalBox.style.display = 'none';
-                        showFinalSequence();
-                    }, 800);
-                }
-            });
+                // 2. Pick the next corner based on click count (Cycle through 0, 1, 2, 3)
+                const nextPos = safePositions[yesClickCount % 4];
+
+                // 3. Apply styles directly
+                btnYes.style.position = "fixed";
+                btnYes.style.top = nextPos.top;
+                btnYes.style.bottom = nextPos.bottom;
+                btnYes.style.left = nextPos.left;
+                btnYes.style.right = nextPos.right;
+                btnYes.style.zIndex = "10000"; // Always on top
+
+                yesClickCount++;
+            } else {
+                proposalBox.style.display = 'none';
+                btnYes.style.display = 'none'; 
+                showFinalSequence();
+            }
+        });
+
+        btnNo.addEventListener('click', () => {
+            proposalBox.style.display = 'none';
+            slapOverlay.style.display = 'flex';
+            btnYes.style.display = 'none';
+
+            setTimeout(() => {
+                slapOverlay.style.display = 'none';
+                proposalBox.style.display = 'block';
+                
+                // Reset Button
+                btnYes.style.display = 'inline-block';
+                btnYes.style.position = 'relative'; 
+                btnYes.style.left = 'auto';
+                btnYes.style.right = 'auto';
+                btnYes.style.top = 'auto';
+                btnYes.style.bottom = 'auto';
+                btnYes.style.zIndex = '1001';
+                btnYes.innerText = 'YES';
+                yesClickCount = 0; 
+            }, 2500);
         });
 
         function showFinalSequence() {
             const cert = document.getElementById('marriageCertificate');
             cert.style.display = 'block';
+            void cert.offsetWidth;
             setInterval(popHearts, 1200);
-            setTimeout(() => { 
-                cert.style.transform = 'translate(-50%, -50%) scale(1)'; 
-                cert.style.transition = 'all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
-            }, 100);
         }
 
         function popHearts() {
@@ -329,7 +487,12 @@
             }
         }
 
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        function resizeCanvas() { 
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            ctx.scale(dpr, dpr);
+        }
         window.addEventListener('resize', resizeCanvas);
     </script>
 </body>
